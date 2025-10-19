@@ -1,0 +1,23 @@
+/* ===== Navbar RentUs ===== */
+.custom-navbar {
+    background-color: #EFE7DC;
+}
+
+/* ===== Logo RentUs ===== */
+.logo-rentus {
+    height: 34px;
+    width: auto;
+    display: block;
+    object-fit: contain;
+    margin-top: 1px; /* alineación óptica */
+    filter: brightness(0) contrast(1.2);
+}
+
+/* ===== Texto de marca ===== */
+.brand-name {
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    color: #212529;
+    line-height: 1;
+}

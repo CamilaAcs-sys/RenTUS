@@ -3,14 +3,7 @@
 use App\Http\Controllers\PropertyController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [PropertyController::class, 'index'])->name('home.index');
 
-
-Route::get('/properties', [PropertyController::class, 'index'])->name('properties');
-Route::get('/properties/create', [PropertyController::class, 'create'])->name('properties.create');
-Route::post('/properties', [PropertyController::class, 'store'])->name('properties.store');
-Route::get('/properties/{id}/edit', [PropertyController::class, 'edit'])->name('properties.edit');
-Route::put('/properties/{id}', [PropertyController::class, 'update'])->name('properties.update');
-Route::delete('/properties/{id}', [PropertyController::class, 'destroy'])->name('properties.destroy');
+//resource agrega todos los demas metodos (create, store, show, edit, update, destroy):
+Route::resource('properties', PropertyController::class);

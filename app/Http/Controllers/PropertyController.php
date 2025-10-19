@@ -7,77 +7,114 @@ use Illuminate\Support\Facades\Http;
 
 class PropertyController extends Controller
 {
-    private function fetchDataFromApi($url)
+    private function baseUrl()
     {
-        $response = Http::get($url);
-        return $response->json();
+        return env('URL_SERVER_API');
     }
 
-    private function postDataToApi($url, $data)
+    private function fetchData($endpoint)
     {
-        $response = Http::post($url, $data);
-        return $response->json();
-    }
+        $response = Http::get($this->baseUrl() . $endpoint);
 
-    private function putDataToApi($url, $data)
-    {
-        $response = Http::put($url, $data);
-        return $response->json();
-    }
+        if (!$response->successful()) {
+            abort(500, 'Error al consumir la API');
+        }
 
-    private function deleteFromApi($url)
-    {
-        $response = Http::delete($url);
         return $response->json();
     }
 
     public function index()
     {
-        $url = env('URL_SERVER_API');
-        $properties = $this->fetchDataFromApi($url . '/properties');
-        return view('properties.index', compact('properties'));
+        return view('home.index');
+    }
+
+    public function show($id)
+    {
+        $property = $this->fetchData('/properties/' . $id);
+        return view('properties.show', compact('property'));
     }
 
     public function create()
     {
-        return view('properties.create');
+        $users = $this->fetchData('/users');
+        return view('properties.create', compact('users'));
     }
 
-    public function store(Request $request)
-    {
-        $url = env('URL_SERVER_API') . '/properties';
+public function store(Request $request)
+{
+    try {
+        $data = $request->only([
+            'title',
+            'city',
+            'address',
+            'monthly_price',
+            'num_bedrooms',
+            'num_bathrooms',
+            'area_m2',
+            'status',
+            'included_services',
+            'description',
+            'image_url',
+            'publication_date',
+            'user_id',
+        ]);
 
-        $data = $request->all(); // valídalo después
+        $response = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json'
+        ])->post($this->baseUrl() . '/properties', $data);
 
-        $response = $this->postDataToApi($url, $data);
+        if (!$response->successful()) {
+            return back()->withErrors([
+                'message' => 'Error en la API al crear propiedad',
+                'detalle' => $response->json() ?? $response->body()
+            ])->withInput();
+        }
 
-        return redirect()->route('properties')->with('success', 'Propiedad creada correctamente');
+        return redirect()->route('properties.index')->with('success', 'Propiedad creada correctamente');
+    } catch (\Exception $e) {
+        return back()->withErrors([
+            'message' => 'Excepción al conectar con la API',
+            'detalle' => $e->getMessage()
+        ])->withInput();
     }
+}
+
 
     public function edit($id)
     {
-        $url = env('URL_SERVER_API');
-        $property = $this->fetchDataFromApi($url . "/properties/$id");
+        $propertyResponse = Http::get($this->baseUrl() . "/properties/{$id}");
+        $usersResponse = Http::get($this->baseUrl() . "/users");
 
-        return view('properties.edit', compact('property'));
+        if (!$propertyResponse->successful() || !$usersResponse->successful()) {
+            abort(500, 'Error al obtener datos de la API');
+        }
+
+        $property = $propertyResponse->json();
+        $users = $usersResponse->json();
+
+        return view('properties.edit', compact('property', 'users'));
     }
 
     public function update(Request $request, $id)
     {
-        $url = env('URL_SERVER_API') . "/properties/$id";
-        $data = $request->all();
+        $response = Http::put($this->baseUrl() . "/properties/$id", $request->all());
 
-        $response = $this->putDataToApi($url, $data);
+        if (!$response->successful()) {
+            return back()->withErrors(['message' => 'Error al actualizar propiedad']);
+        }
 
-        return redirect()->route('properties')->with('success', 'Propiedad actualizada correctamente');
+        return redirect()->route('properties.index')->with('success', 'Propiedad actualizada correctamente');
     }
-
 
     public function destroy($id)
     {
-        $url = env('URL_SERVER_API') . "/properties/$id";
-        $this->deleteFromApi($url);
+        $response = Http::delete($this->baseUrl() . "/properties/$id");
 
-        return redirect()->route('properties')->with('success', 'Propiedad eliminada');
+        if (!$response->successful()) {
+            return back()->withErrors(['message' => 'Error al eliminar propiedad']);
+        }
+
+        return redirect()->route('properties.index')->with('success', 'Propiedad eliminada correctamente');
     }
 }
