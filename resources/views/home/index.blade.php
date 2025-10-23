@@ -21,7 +21,7 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    fetch('http://api.test/api/properties')
+    fetch('{{ env('URL_SERVER_API') }}/api/properties')
       .then(response => response.json())
       .then(data => renderProperties(data))
       .catch(error => console.error('Error al cargar propiedades:', error));

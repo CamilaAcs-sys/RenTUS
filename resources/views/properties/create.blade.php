@@ -132,7 +132,7 @@
               <button type="submit" class="btn btn-dark flex-fill">
                 <i class="bi bi-upload me-1"></i> Publicar Propiedad
               </button>
-              <a href="{{ route('properties.index') }}" class="btn btn-outline-secondary flex-fill">
+              <a href="{{ route('home.index') }}" class="btn btn-outline-secondary flex-fill">
                 <i class="bi bi-x-circle me-1"></i> Cancelar
               </a>
             </div>
