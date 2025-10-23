@@ -3,7 +3,19 @@
 use App\Http\Controllers\PropertyController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [PropertyController::class, 'index'])->name('home.index');
+/*
+|--------------------------------------------------------------------------
+| WEB ROUTES
+|--------------------------------------------------------------------------
+*/
 
-//resource agrega todos los demas metodos (create, store, show, edit, update, destroy):
-Route::resource('properties', PropertyController::class);
+// 🏠 HOME – muestra máximo 9 propiedades
+Route::get('/', [PropertyController::class, 'home'])->name('home.index');
+
+// 🧱 CRUD completo de propiedades (para administrar)
+Route::resource('properties', PropertyController::class)->except(['show']);
+
+// 👁️ Ruta para mostrar detalle de una propiedad (fuera del resource por claridad)
+Route::get('/properties/{id}', [PropertyController::class, 'show'])->name('properties.show');
+// 📄 Página "Sobre nosotros
+Route::view('/about', 'about.index')->name('about.index');
