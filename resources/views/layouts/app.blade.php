@@ -17,6 +17,9 @@
     <footer class="mt-auto">
         @include('includes.footer')
     </footer>
-    
+
+    {{-- 👇 Aquí Laravel inyectará los scripts personalizados de cada vista --}}
+    @stack('scripts')
+
 </body>
 </html>

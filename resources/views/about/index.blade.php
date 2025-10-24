@@ -13,6 +13,21 @@
             <p class="lead text-muted mx-auto" style="max-width: 700px;">
                 Conectamos a propietarios e inquilinos a través de tecnología moderna y una experiencia segura y transparente.
             </p>
+
+            <!-- 🔹 Botones de traducción -->
+            <div class="mt-4">
+                <button class="btn btn-primary me-2" onclick="traducirAbout('en')">
+                    🇺🇸 Traducir al inglés
+                </button>
+                <button class="btn btn-secondary" onclick="revertirAbout()">
+                    🇪🇸 Volver al español
+                </button>
+            </div>
+
+            <!-- 🔹 Loader (mensaje mientras traduce) -->
+            <div id="loader" class="mt-3 text-muted fw-semibold" style="display: none;">
+                Traduciendo contenido...
+            </div>
         </div>
 
         <!-- Contenido principal -->
@@ -68,3 +83,7 @@
     </div>
 </section>
 @endsection
+
+@push('scripts')
+    @vite(['resources/js/about.js'])
+@endpush
